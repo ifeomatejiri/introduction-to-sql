@@ -1,0 +1,37 @@
+-- ================================================
+-- Introduction to SQL: Portfolio Practice Queries
+-- Database Engine: SQLite
+-- ================================================
+
+-- 1. Inspect Table Structure
+PRAGMA table_info(orders);
+
+-- 2. Multi-Table Join & Revenue Aggregation
+SELECT 
+    subscriptions.description, 
+    SUM(subscriptions.price_per_month) AS total_revenue
+FROM subscriptions
+JOIN orders 
+    ON subscriptions.subscription_id = orders.subscription_id
+GROUP BY subscriptions.description;
+
+-- 3. Top Repeat Customers Analysis
+SELECT 
+    customers.customer_name, 
+    COUNT(orders.order_id) AS total_orders
+FROM customers
+JOIN orders 
+    ON customers.customer_id = orders.customer_id
+GROUP BY customers.customer_name
+HAVING COUNT(orders.order_id) > 1;
+
+-- 4. Advanced Filtering (WHERE vs. HAVING)
+SELECT 
+    subscriptions.description, 
+    COUNT(orders.order_id) AS order_count
+FROM subscriptions
+JOIN orders 
+    ON subscriptions.subscription_id = orders.subscription_id
+WHERE subscriptions.price_per_month > 2000
+GROUP BY subscriptions.description
+HAVING COUNT(orders.order_id) >= 2;
