@@ -1,12 +1,47 @@
--- ================================================
--- Introduction to SQL: Portfolio Practice Queries
--- Database Engine: SQLite
--- ================================================
 
--- 1. Inspect Table Structure
+-- ============================================================
+-- SQL Practice Lab: Table Creation, Insertion & Relational Queries
+-- Database Engine: SQLite
+-- ============================================================
+
+-- 1. Table Creation & Schema Design (CREATE TABLE)
+CREATE TABLE IF NOT EXISTS customers (
+    customer_id INTEGER PRIMARY KEY,
+    customer_name TEXT NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS subscriptions (
+    subscription_id INTEGER PRIMARY KEY,
+    description TEXT NOT NULL,
+    price_per_month INTEGER NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS orders (
+    order_id INTEGER PRIMARY KEY,
+    customer_id INTEGER NOT NULL,
+    subscription_id INTEGER NOT NULL,
+    FOREIGN KEY (customer_id) REFERENCES customers(customer_id),
+    FOREIGN KEY (subscription_id) REFERENCES subscriptions(subscription_id)
+);
+
+-- 2. Data Insertion (INSERT INTO)
+INSERT INTO customers (customer_id, customer_name) VALUES
+(1, 'Ada Okafor'),
+(2, 'Bola Ade'),
+(3, 'Chidi Eze'),
+(4, 'Dami Bello'),
+(5, 'Efe Ojo'),
+(6, 'Femi Lawal');
+
+INSERT INTO subscriptions (subscription_id, description, price_per_month) VALUES
+(1, 'Daily newspaper', 4000),
+(2, 'Digital only', 2500),
+(3, 'Weekend newspaper', 3000);
+
+-- 3. Schema Inspection
 PRAGMA table_info(orders);
 
--- 2. Multi-Table Join & Revenue Aggregation
+-- 4. Subscription Revenue Report
 SELECT 
     subscriptions.description, 
     SUM(subscriptions.price_per_month) AS total_revenue
@@ -15,7 +50,7 @@ JOIN orders
     ON subscriptions.subscription_id = orders.subscription_id
 GROUP BY subscriptions.description;
 
--- 3. Top Repeat Customers Analysis
+-- 5. Top Repeat Customers Analysis (HAVING Clause)
 SELECT 
     customers.customer_name, 
     COUNT(orders.order_id) AS total_orders
@@ -25,7 +60,7 @@ JOIN orders
 GROUP BY customers.customer_name
 HAVING COUNT(orders.order_id) > 1;
 
--- 4. Advanced Filtering (WHERE vs. HAVING)
+-- 6. Combined Filtering (WHERE vs. HAVING)
 SELECT 
     subscriptions.description, 
     COUNT(orders.order_id) AS order_count
